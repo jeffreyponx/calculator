@@ -3,159 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Простой калькулятор | GitHub Pages</title>
+    <title>Калькулятор с памятью | GitHub Pages</title>
     <style>
-        /* Импорт SF Pro Display (для macOS/iOS будет нативный, для остальных — запасной вариант) */
-        @font-face {
-            font-family: 'SF Pro Display';
-            src: local('SF Pro Display Bold'), local('SFProDisplay-Bold');
-            font-weight: bold;
-            font-style: normal;
-        }
-        
-        @font-face {
-            font-family: 'SF Pro Display';
-            src: local('SF Pro Display Regular'), local('SFProDisplay-Regular');
-            font-weight: normal;
-            font-style: normal;
-        }
+    @font-face {
+        font-family: 'SF Pro Display';
+        src: local('SF Pro Display Bold'), local('SFProDisplay-Bold');
+        font-weight: bold;
+        font-style: normal;
+    }
+    
+    @font-face {
+        font-family: 'SF Pro Display';
+        src: local('SF Pro Display Regular'), local('SFProDisplay-Regular');
+        font-weight: normal;
+        font-style: normal;
+    }
 
-        * {
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+    * {
+        font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(145deg, #2b2b2b 0%, #1a1a1a 100%);
-        }
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background: linear-gradient(145deg, #2b2b2b 0%, #1a1a1a 100%);
+        padding: 10px;
+    }
 
-        .calculator {
-            background: #202020;
-            border-radius: 30px;
-            padding: 25px 20px 20px 20px;
-            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.08);
-            width: 320px;
-            border: 1px solid #3a3a3a;
-        }
+    .calculator {
+        background: #202020;
+        border-radius: 30px;
+        padding: 25px 20px 20px 20px;
+        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.6), inset 0 1px 3px rgba(255, 255, 255, 0.08);
+        width: 380px;
+        border: 1px solid #3a3a3a;
+    }
 
-        .display {
-            background: #1c1c1e;
-            border-radius: 16px;
-            padding: 15px 15px;
-            margin-bottom: 20px;
-            box-shadow: inset 0 5px 8px #0f0f0f, 0 2px 3px #3f3f3f;
-            border-bottom: 1px solid #4a4a4a;
-        }
+    .display {
+        background: #1c1c1e;
+        border-radius: 16px;
+        padding: 15px 15px;
+        margin-bottom: 20px;
+        box-shadow: inset 0 5px 8px #0f0f0f, 0 2px 3px #3f3f3f;
+        border-bottom: 1px solid #4a4a4a;
+    }
 
-        #inputField {
-            width: 100%;
-            box-sizing: border-box;
-            background: transparent;
-            border: none;
-            color: #f5f5f7;
-            font-size: 32px;
-            font-weight: bold;
-            text-align: right;
-            padding: 5px 0;
-            outline: none;
-            letter-spacing: 0.5px;
-            font-family: inherit;
-        }
+    #inputField {
+        width: 100%;
+        box-sizing: border-box;
+        background: transparent;
+        border: none;
+        color: #f5f5f7;
+        font-size: 28px;
+        font-weight: bold;
+        text-align: right;
+        padding: 5px 0;
+        outline: none;
+        letter-spacing: 0.5px;
+        font-family: inherit;
+    }
 
-        #inputField::placeholder {
-            color: #5a5a5e;
-            font-size: 24px;
-            font-weight: bold;
-        }
+    #inputField::placeholder {
+        color: #5a5a5e;
+        font-size: 20px;
+        font-weight: bold;
+    }
 
-        #resultField {
-            width: 100%;
-            box-sizing: border-box;
-            background: transparent;
-            border: none;
-            color: #ff9f0a;
-            font-size: 22px;
-            font-weight: bold;
-            text-align: right;
-            padding: 5px 0 0 0;
-            min-height: 30px;
-            letter-spacing: 0.5px;
-            opacity: 0.9;
-            border-top: 1px dashed #3a3a3c;
-            margin-top: 8px;
-            font-family: inherit;
-        }
+    #resultField {
+        width: 100%;
+        box-sizing: border-box;
+        background: transparent;
+        border: none;
+        color: #ff9f0a;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: right;
+        padding: 5px 0 0 0;
+        min-height: 25px;
+        letter-spacing: 0.5px;
+        opacity: 0.9;
+        border-top: 1px dashed #3a3a3c;
+        margin-top: 8px;
+        font-family: inherit;
+    }
 
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-        }
+    /* Блок памяти */
+    .memory-panel {
+        background: #1a1a1c;
+        border-radius: 12px;
+        padding: 12px 10px;
+        margin-bottom: 15px;
+        border: 1px solid #3a3a3c;
+    }
 
-        button {
-            background: #333333;
-            border: none;
-            color: white;
-            font-size: 28px;
-            font-weight: bold;
-            padding: 18px 5px;
-            border-radius: 60px;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #1a1a1a, 0 4px 8px rgba(0,0,0,0.3);
-            transition: all 0.08s ease;
-            text-align: center;
-            border: 1px solid #4a4a4a;
-            user-select: none;
-            line-height: 1;
-            font-family: inherit;
-        }
+    .memory-slots {
+        display: flex;
+        justify-content: space-around;
+        gap: 8px;
+        margin-bottom: 10px;
+    }
 
-        button:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #1a1a1a, 0 2px 6px rgba(0,0,0,0.3);
-        }
+    .memory-slot {
+        background: #2c2c2e;
+        border-radius: 8px;
+        padding: 8px 0;
+        flex: 1;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        border: 1px solid #4a4a4d;
+        box-shadow: inset 0 2px 4px #0f0f0f;
+    }
 
-        .num {
-            background: #4a4a4d;
-            border-color: #6b6b6e;
-            color: #ffffff;
-        }
+    .memory-slot:hover {
+        background: #3a3a3c;
+        transform: scale(0.98);
+    }
 
-        .operator {
-            background: #ff9f0a;
-            color: white;
-            border-color: #ffb84d;
-            box-shadow: 0 6px 0 #b36b00, 0 4px 8px rgba(0,0,0,0.3);
-        }
+    .memory-slot.active {
+        background: #ff9f0a;
+        border-color: #ffb84d;
+        box-shadow: 0 0 8px rgba(255, 159, 10, 0.3);
+    }
 
-        .equals {
-            background: #ff9f0a;
-            color: white;
-            grid-column: span 1;
-            border-color: #ffb84d;
-            box-shadow: 0 6px 0 #b36b00, 0 4px 8px rgba(0,0,0,0.3);
-        }
+    .memory-slot.active .slot-value {
+        color: #1a1a1a;
+    }
 
-        .clear, .back {
-            background: #a6a6a6;
-            color: #1a1a1a;
-            border-color: #c7c7c7;
-            box-shadow: 0 6px 0 #6e6e6e, 0 4px 8px rgba(0,0,0,0.3);
-        }
+    .slot-index {
+        font-size: 11px;
+        color: #8e8e93;
+        font-weight: bold;
+        margin-bottom: 3px;
+    }
 
-        .zero {
-            grid-column: span 2;
-        }
+    .slot-value {
+        font-size: 14px;
+        color: #ffffff;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 0 5px;
+    }
 
-        button:focus-visible {
-            outline: 2px solid #ff9f0a;
-            outline-offset: 2px;
-        }
-    </style>
+    .memory-controls {
+        display: flex;
+        gap: 8px;
+        justify-content: space-between;
+    }
+
+    .mem-btn {
+        background: #3a3a3c;
+        border: none;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        padding: 8px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        box-shadow: 0 3px 0 #1a1a1a;
+        transition: all 0.08s ease;
+        border: 1px solid #5a5a5e;
+        flex: 1;
+        text-align: center;
+    }
+
+    .mem-btn:active {
+        transform: translateY(3px);
+        box-shadow: 0 1px 0 #1a1a1a;
+    }
+
+    .mem-btn.save {
+        background: #30b0c0;
+        border-color: #5cc8d6;
+        box-shadow: 0 3px 0 #1a7a8a;
+    }
+
+    .mem-btn.clear-all {
+        background: #a6a6a6;
+        color: #1a1a1a;
+        border-color: #c7c7c7;
+        box-shadow: 0 3px 0 #6e6e6e;
+    }
+
+    .buttons {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 10px;
+    }
+
+    button {
+        background: #333333;
+        border: none;
+        color: white;
+        font-size: 22px;
+        font-weight: bold;
+        padding: 14px 5px;
+        border-radius: 50px;
+        cursor: pointer;
+        box-shadow: 0 5px 0 #1a1a1a, 0 3px 6px rgba(0,0,0,0.3);
+        transition: all 0.08s ease;
+        text-align: center;
+        border: 1px solid #4a4a4a;
+        user-select: none;
+        line-height: 1;
+        font-family: inherit;
+    }
+
+    button:active {
+        transform: translateY(4px);
+        box-shadow: 0 1px 0 #1a1a1a, 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .num {
+        background: #4a4a4d;
+        border-color: #6b6b6e;
+        color: #ffffff;
+    }
+
+    .operator {
+        background: #ff9f0a;
+        color: white;
+        border-color: #ffb84d;
+        box-shadow: 0 5px 0 #b36b00, 0 3px 6px rgba(0,0,0,0.3);
+        font-size: 24px;
+    }
+
+    /* 🔥 ВОТ ЗДЕСЬ ИЗМЕНЕНИЕ — теперь function такого же цвета как operator */
+    .function {
+        background: #ff9f0a;
+        color: white;
+        border-color: #ffb84d;
+        box-shadow: 0 5px 0 #b36b00, 0 3px 6px rgba(0,0,0,0.3);
+        font-size: 20px;
+    }
+
+    .equals {
+        background: #ff9f0a;
+        color: white;
+        border-color: #ffb84d;
+        box-shadow: 0 5px 0 #b36b00, 0 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .clear, .back {
+        background: #a6a6a6;
+        color: #1a1a1a;
+        border-color: #c7c7c7;
+        box-shadow: 0 5px 0 #6e6e6e, 0 3px 6px rgba(0,0,0,0.3);
+    }
+
+    .zero {
+        grid-column: span 2;
+    }
+
+    button:focus-visible {
+        outline: 2px solid #ff9f0a;
+        outline-offset: 2px;
+    }
+</style>
 </head>
 <body>
     <div class="calculator">
@@ -163,30 +272,53 @@
             <input type="text" id="inputField" placeholder="0" readonly>
             <div id="resultField"></div>
         </div>
+
+        <!-- Панель памяти -->
+        <div class="memory-panel">
+            <div class="memory-slots" id="memorySlots">
+                <!-- Слоты будут созданы в JavaScript -->
+            </div>
+            <div class="memory-controls">
+                <button class="mem-btn save" id="saveToMemoryBtn">MS</button>
+                <button class="mem-btn" id="recallMemoryBtn">MR</button>
+                <button class="mem-btn clear-all" id="clearMemoryBtn">MC</button>
+            </div>
+        </div>
+
         <div class="buttons">
+            <!-- 1 ряд -->
             <button class="clear" data-action="clear">C</button>
             <button class="back" data-action="backspace">⌫</button>
+            <button class="function" data-function="sqrt">√</button>
+            <button class="function" data-function="power">xʸ</button>
             <button class="operator" data-operator="%">%</button>
-            <button class="operator" data-operator="/">÷</button>
             
+            <!-- 2 ряд -->
             <button class="num" data-number="7">7</button>
             <button class="num" data-number="8">8</button>
             <button class="num" data-number="9">9</button>
-            <button class="operator" data-operator="*">×</button>
+            <button class="operator" data-operator="/">÷</button>
+            <button class="function" data-function="square">x²</button>
             
+            <!-- 3 ряд -->
             <button class="num" data-number="4">4</button>
             <button class="num" data-number="5">5</button>
             <button class="num" data-number="6">6</button>
-            <button class="operator" data-operator="-">−</button>
+            <button class="operator" data-operator="*">×</button>
+            <button class="function" data-function="cube">x³</button>
             
+            <!-- 4 ряд -->
             <button class="num" data-number="1">1</button>
             <button class="num" data-number="2">2</button>
             <button class="num" data-number="3">3</button>
+            <button class="operator" data-operator="-">−</button>
             <button class="operator" data-operator="+">+</button>
             
+            <!-- 5 ряд -->
             <button class="num zero" data-number="0">0</button>
             <button class="num" data-number=".">.</button>
             <button class="equals" data-action="equals">=</button>
+            <button class="function" data-function="inverse">¹⁄ₓ</button>
         </div>
     </div>
 
@@ -196,26 +328,75 @@
 
             const inputField = document.getElementById('inputField');
             const resultField = document.getElementById('resultField');
+            const memorySlots = document.getElementById('memorySlots');
 
+            // Состояние калькулятора
             let currentExpression = '';
             let lastResult = '';
             let shouldReset = false;
+            let waitingForPower = false; // Флаг для ввода степени
 
+            // Память на 5 чисел
+            let memory = ['', '', '', '', ''];
+            let activeSlot = 0;
+
+            // Инициализация слотов памяти
+            function renderMemorySlots() {
+                memorySlots.innerHTML = '';
+                memory.forEach((value, index) => {
+                    const slot = document.createElement('div');
+                    slot.className = `memory-slot ${index === activeSlot ? 'active' : ''}`;
+                    slot.innerHTML = `
+                        <div class="slot-index">M${index}</div>
+                        <div class="slot-value">${value || '—'}</div>
+                    `;
+                    slot.addEventListener('click', () => {
+                        activeSlot = index;
+                        renderMemorySlots();
+                        // При клике на слот также показываем его значение в result
+                        if (memory[index]) {
+                            resultField.textContent = `M${index}: ${memory[index]}`;
+                        }
+                    });
+                    memorySlots.appendChild(slot);
+                });
+            }
+
+            // Обновление отображения
             function updateDisplay() {
                 inputField.value = currentExpression === '' ? '0' : currentExpression;
+                
+                if (!waitingForPower) {
+                    if (currentExpression !== '') {
+                        const res = calculate(currentExpression);
+                        lastResult = (res === 'Ошибка') ? 'Ошибка' : res;
+                    } else {
+                        lastResult = '';
+                    }
+                }
+                
                 resultField.textContent = lastResult !== '' ? `= ${lastResult}` : '';
             }
 
+            // Вычисление выражения
             function calculate(expr) {
                 if (expr === '') return '';
                 
                 let calcExpr = expr
                     .replace(/×/g, '*')
                     .replace(/÷/g, '/')
-                    .replace(/−/g, '-');
+                    .replace(/−/g, '-')
+                    .replace(/√/g, 'Math.sqrt')
+                    .replace(/x²/g, '**2')
+                    .replace(/x³/g, '**3');
                 
                 if (calcExpr.includes('%')) {
                     calcExpr = calcExpr.replace(/(\d+(?:\.\d+)?)%/g, '($1/100)');
+                }
+
+                // Обработка 1/x
+                if (calcExpr.includes('¹⁄ₓ')) {
+                    calcExpr = calcExpr.replace(/¹⁄ₓ\(([^)]+)\)/g, '(1/($1))');
                 }
 
                 try {
@@ -232,13 +413,71 @@
                 }
             }
 
+            // Применение функции к текущему выражению
+            function applyFunction(func) {
+                if (currentExpression === '' && func !== 'sqrt') return;
+
+                let value = currentExpression;
+                if (value === '') value = '0';
+
+                switch(func) {
+                    case 'sqrt':
+                        currentExpression = `√(${value})`;
+                        break;
+                    case 'square':
+                        currentExpression = `(${value})²`;
+                        currentExpression = currentExpression.replace(/²/g, '');
+                        currentExpression = `(${currentExpression})x²`;
+                        break;
+                    case 'cube':
+                        currentExpression = `(${value})³`;
+                        currentExpression = currentExpression.replace(/³/g, '');
+                        currentExpression = `(${currentExpression})x³`;
+                        break;
+                    case 'inverse':
+                        currentExpression = `¹⁄ₓ(${value})`;
+                        break;
+                    case 'power':
+                        if (value) {
+                            currentExpression = `${value}^`;
+                            waitingForPower = true;
+                            resultField.textContent = 'Введите степень';
+                        }
+                        break;
+                }
+
+                if (func !== 'power') {
+                    const res = calculate(currentExpression);
+                    lastResult = (res === 'Ошибка') ? 'Ошибка' : res;
+                }
+                
+                updateDisplay();
+            }
+
             function appendToExpression(value) {
                 if (shouldReset) {
-                    if (!isOperator(value) && value !== '%') {
+                    if (!isOperator(value) && value !== '%' && value !== '^') {
                         currentExpression = '';
                         lastResult = '';
                     }
                     shouldReset = false;
+                }
+
+                // Обработка ввода степени
+                if (waitingForPower) {
+                    if (!isNaN(value) || value === '.') {
+                        currentExpression += value;
+                        waitingForPower = false;
+                        // Заменяем ^ на ** для вычисления
+                        currentExpression = currentExpression.replace(/\^/g, '**');
+                        const res = calculate(currentExpression);
+                        lastResult = (res === 'Ошибка') ? 'Ошибка' : res;
+                    } else {
+                        waitingForPower = false;
+                        currentExpression = currentExpression.slice(0, -1);
+                    }
+                    updateDisplay();
+                    return;
                 }
 
                 if (currentExpression === '' && isOperator(value) && value !== '−') {
@@ -256,18 +495,11 @@
                     }
                 }
 
-                if (currentExpression !== '') {
-                    const res = calculate(currentExpression);
-                    lastResult = (res === 'Ошибка') ? 'Ошибка' : res;
-                } else {
-                    lastResult = '';
-                }
-
                 updateDisplay();
             }
 
             function isOperator(char) {
-                return char === '+' || char === '−' || char === '×' || char === '÷' || char === '%';
+                return char === '+' || char === '−' || char === '×' || char === '÷' || char === '%' || char === '^';
             }
 
             function handleEquals() {
@@ -284,6 +516,7 @@
                 }
                 
                 shouldReset = true;
+                waitingForPower = false;
                 updateDisplay();
             }
 
@@ -291,6 +524,7 @@
                 currentExpression = '';
                 lastResult = '';
                 shouldReset = false;
+                waitingForPower = false;
                 updateDisplay();
             }
 
@@ -301,14 +535,39 @@
                     shouldReset = false;
                 } else {
                     currentExpression = currentExpression.slice(0, -1);
-                    if (currentExpression !== '') {
-                        const res = calculate(currentExpression);
-                        lastResult = (res === 'Ошибка') ? 'Ошибка' : res;
-                    } else {
-                        lastResult = '';
+                }
+                waitingForPower = false;
+                updateDisplay();
+            }
+
+            // Функции работы с памятью
+            function saveToMemory() {
+                if (currentExpression && !waitingForPower) {
+                    const value = calculate(currentExpression);
+                    if (value !== 'Ошибка') {
+                        memory[activeSlot] = value;
+                        renderMemorySlots();
+                        resultField.textContent = `Сохранено в M${activeSlot}: ${value}`;
                     }
                 }
-                updateDisplay();
+            }
+
+            function recallMemory() {
+                if (memory[activeSlot]) {
+                    if (shouldReset) {
+                        currentExpression = '';
+                        shouldReset = false;
+                    }
+                    currentExpression += memory[activeSlot];
+                    updateDisplay();
+                }
+            }
+
+            function clearAllMemory() {
+                memory = ['', '', '', '', ''];
+                activeSlot = 0;
+                renderMemorySlots();
+                resultField.textContent = 'Память очищена';
             }
 
             function handleButtonClick(e) {
@@ -329,6 +588,12 @@
                     appendToExpression(op);
                     return;
                 }
+
+                const func = button.getAttribute('data-function');
+                if (func !== null) {
+                    applyFunction(func);
+                    return;
+                }
                 
                 const action = button.getAttribute('data-action');
                 if (action === 'clear') {
@@ -341,10 +606,19 @@
             }
 
             function init() {
-                const buttons = document.querySelectorAll('button');
+                renderMemorySlots();
+                
+                // Кнопки памяти
+                document.getElementById('saveToMemoryBtn').addEventListener('click', saveToMemory);
+                document.getElementById('recallMemoryBtn').addEventListener('click', recallMemory);
+                document.getElementById('clearMemoryBtn').addEventListener('click', clearAllMemory);
+                
+                // Основные кнопки
+                const buttons = document.querySelectorAll('.buttons button');
                 buttons.forEach(btn => {
                     btn.addEventListener('click', handleButtonClick);
                 });
+                
                 updateDisplay();
             }
 
